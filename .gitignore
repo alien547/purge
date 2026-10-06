@@ -1,0 +1,13 @@
+obj/
+release/
+*.o
+*.obj
+*.exe
+*.dll
+*.a
+*.la
+*.so
+*.dylib
+*.layout
+*.win
+*.gch
