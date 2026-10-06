@@ -1,0 +1,34 @@
+/* THIS FILE WILL BE OVERWRITTEN BY DEV-C++ */
+/* DO NOT EDIT! */
+
+#include <windows.h> // include for version info constants
+
+
+//
+// TO CHANGE VERSION INFORMATION, EDIT PROJECT OPTIONS...
+//
+1 VERSIONINFO
+FILEVERSION 1,0,2,0
+PRODUCTVERSION 1,0,2,0
+FILETYPE VFT_APP
+{
+  BLOCK "StringFileInfo"
+  {
+    BLOCK "040404E4"
+    {
+      VALUE "CompanyName", "alien547"
+      VALUE "FileVersion", "1.0.2.0"
+      VALUE "FileDescription", "Server"
+      VALUE "InternalName", ""
+      VALUE "LegalCopyright", "Copyright (c) 2026 alien547"
+      VALUE "LegalTrademarks", ""
+      VALUE "OriginalFilename", "Server.exe"
+      VALUE "ProductName", "Server"
+      VALUE "ProductVersion", "1.0.2.0"
+    }
+  }
+  BLOCK "VarFileInfo"
+  {
+    VALUE "Translation", 0x0404, 1252
+  }
+}
