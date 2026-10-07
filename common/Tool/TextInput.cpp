@@ -6,22 +6,27 @@
 #include "Font.h"
 #include "Utf8.h"
 #include "Blur.h"
+#include "Image.h"
 #include "TextInput.h"
 using namespace std;
 using namespace Settings;
 
-string read_input(int x, int y, int max_len, const string& default_value, function<bool(SDL_KeyboardEvent&, string&)> on_keydown){
+string read_input(int x, int y, int max_len, const string& default_value, function<bool(SDL_KeyboardEvent&, string&)> on_keydown, bool blurred_background){
     string input;
     deque<string> history_input;
     const int MAX_HISTORY_SIZE=50;
     bool done=false;
     int change_input_cursor=0;
     SDL_StartTextInput();
-    SDL_Surface* snapshot=SDL_CreateRGBSurfaceWithFormat(0, SCREEN_WIDTH, SCREEN_HEIGHT, 32, SDL_PIXELFORMAT_RGBA8888);
-    SDL_RenderReadPixels(renderer, NULL, SDL_PIXELFORMAT_RGBA8888, snapshot->pixels, snapshot->pitch);
-    SDL_Texture* clear_bg=SDL_CreateTextureFromSurface(renderer, snapshot);
-    SDL_Texture* blurred_bg=create_blurred_texture(snapshot, 1.0f);
-    SDL_FreeSurface(snapshot);
+    SDL_Surface* snapshot=nullptr;
+    SDL_Texture* clear_bg=nullptr, * blurred_bg=nullptr;
+    if(blurred_background){
+        snapshot=SDL_CreateRGBSurfaceWithFormat(0, SCREEN_WIDTH, SCREEN_HEIGHT, 32, SDL_PIXELFORMAT_RGBA8888);
+        SDL_RenderReadPixels(renderer, NULL, SDL_PIXELFORMAT_RGBA8888, snapshot->pixels, snapshot->pitch);
+        clear_bg=SDL_CreateTextureFromSurface(renderer, snapshot);
+        blurred_bg=create_blurred_texture(snapshot, 1.0f);
+        SDL_FreeSurface(snapshot);
+    }
     Uint32 start_time=SDL_GetTicks();
     SDL_Event e;
     while(!done){
@@ -83,9 +88,13 @@ string read_input(int x, int y, int max_len, const string& default_value, functi
         }
         Uint32 elapsed=SDL_GetTicks()-start_time;
         float breath=fabs(cosf(elapsed*0.0005f))*0.6f;
-        SDL_RenderCopy(renderer, blurred_bg, NULL, NULL);
-        SDL_SetTextureAlphaMod(clear_bg, Uint8(breath*255));
-        SDL_RenderCopy(renderer, clear_bg, NULL, NULL);
+        if(blurred_background){
+            SDL_RenderCopy(renderer, blurred_bg, NULL, NULL);
+            SDL_SetTextureAlphaMod(clear_bg, Uint8(breath*255));
+            SDL_RenderCopy(renderer, clear_bg, NULL, NULL);
+        }else{
+            draw_background_texture();
+        }
 
         SDL_Rect rect={x, y, max_len*FONT_SIZE, 24};
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 120);

@@ -26,21 +26,33 @@ jobs:
           mkdir -p libs/lz4/lib libs/lz4/include
           curl -L https://raw.githubusercontent.com/lz4/lz4/dev/lib/lz4.c -o libs/lz4/lib/lz4.cpp
           curl -L https://raw.githubusercontent.com/lz4/lz4/dev/lib/lz4.h -o libs/lz4/include/lz4.h
-          ls -la libs/lz4/lib/ libs/lz4/include/
 
-      - name: Convert source files from GBK to UTF-8
+      - name: Convert GBK to UTF-8 (skip already UTF-8)
         run: |
           for dir in Game common; do
             find "$dir" -type f \( -name "*.cpp" -o -name "*.h" \) | while read f; do
+              if iconv -f UTF-8 -t UTF-8 "$f" > /dev/null 2>&1; then
+                echo "already UTF-8: $f"
+                continue
+              fi
               if iconv -f GBK -t UTF-8 "$f" > "$f.tmp" 2>/dev/null; then
                 mv "$f.tmp" "$f"
                 echo "converted: $f"
               else
                 rm -f "$f.tmp"
-                echo "skip (not GBK?): $f"
+                echo "SKIP: $f"
               fi
             done
           done
+
+      - name: Verify encoding
+        run: |
+          echo "=== common/Settings.cpp line 6 ==="
+          sed -n '6p' common/Settings.cpp
+          echo "=== Game/GameState.cpp line 110-112 ==="
+          sed -n '110,112p' Game/GameState.cpp
+          echo "=== file check ==="
+          file common/Settings.cpp
 
       - name: Build WebAssembly
         working-directory: ./Game
@@ -90,7 +102,7 @@ jobs:
             -sINITIAL_MEMORY=64MB \
             -sMAXIMUM_MEMORY=512MB \
             -sFORCE_FILESYSTEM=1 \
-            -O2 \
+            -O1 \
             -std=c++11 \
             -DWEB_BUILD \
             -D__EMSCRIPTEN__ \
