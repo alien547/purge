@@ -21,6 +21,13 @@ jobs:
       - name: Verify emcc
         run: emcc --version
 
+      - name: Download lz4 source
+        run: |
+          mkdir -p libs/lz4/lib libs/lz4/include
+          curl -L https://raw.githubusercontent.com/lz4/lz4/dev/lib/lz4.c -o libs/lz4/lib/lz4.c
+          curl -L https://raw.githubusercontent.com/lz4/lz4/dev/lib/lz4.h -o libs/lz4/include/lz4.h
+          ls -la libs/lz4/lib/ libs/lz4/include/
+
       - name: Build WebAssembly
         working-directory: ./Game
         run: |
@@ -50,6 +57,7 @@ jobs:
             ../common/Tool/Audio.cpp \
             ../common/Tool/Blur.cpp \
             ../common/Tool/Menu.cpp \
+            ../libs/lz4/lib/lz4.c \
             -o purge.html \
             -I../libs/FastNoiseLite \
             -I../libs/nlohmann \
@@ -60,7 +68,6 @@ jobs:
             -sUSE_SDL_MIXER=2 \
             -sUSE_SDL_TTF=2 \
             -sUSE_SDL_IMAGE=2 \
-            --use-port=lz4 \
             -sSDL2_IMAGE_FORMATS='["png","jpg"]' \
             -sALLOW_MEMORY_GROWTH=1 \
             -sASYNCIFY=1 \
@@ -68,10 +75,8 @@ jobs:
             -sINITIAL_MEMORY=64MB \
             -sMAXIMUM_MEMORY=512MB \
             -sFORCE_FILESYSTEM=1 \
-            -O1 \
+            -O2 \
             -std=c++11 \
-            -finput-charset=GBK \
-            -fexec-charset=UTF-8 \
             -DWEB_BUILD \
             -D__EMSCRIPTEN__ \
             --preload-file ../assets@/assets \
