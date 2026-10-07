@@ -27,7 +27,7 @@ jobs:
           curl -L https://raw.githubusercontent.com/lz4/lz4/dev/lib/lz4.c -o libs/lz4/lib/lz4.cpp
           curl -L https://raw.githubusercontent.com/lz4/lz4/dev/lib/lz4.h -o libs/lz4/include/lz4.h
 
-      - name: Convert GBK to UTF-8 (skip already UTF-8)
+      - name: Convert GBK to UTF-8
         run: |
           for dir in Game common; do
             find "$dir" -type f \( -name "*.cpp" -o -name "*.h" \) | while read f; do
@@ -44,15 +44,6 @@ jobs:
               fi
             done
           done
-
-      - name: Verify encoding
-        run: |
-          echo "=== common/Settings.cpp line 6 ==="
-          sed -n '6p' common/Settings.cpp
-          echo "=== Game/GameState.cpp line 110-112 ==="
-          sed -n '110,112p' Game/GameState.cpp
-          echo "=== file check ==="
-          file common/Settings.cpp
 
       - name: Build WebAssembly
         working-directory: ./Game
@@ -95,15 +86,17 @@ jobs:
             -sUSE_SDL_MIXER=2 \
             -sUSE_SDL_TTF=2 \
             -sUSE_SDL_IMAGE=2 \
-            -sSDL2_IMAGE_FORMATS='["png","jpg"]' \
+            -sSDL2_IMAGE_FORMATS='["png"]' \
             -sALLOW_MEMORY_GROWTH=1 \
             -sASYNCIFY=1 \
-            -sASYNCIFY_ADVISE=1 \
+            -sASYNCIFY_IMPORTS='["SDL_Delay"]' \
+            -sEVAL_CTORS=1 \
+            -sENVIRONMENT=web \
             -sSTACK_SIZE=8MB \
             -sINITIAL_MEMORY=64MB \
             -sMAXIMUM_MEMORY=512MB \
             -sFORCE_FILESYSTEM=1 \
-            -O0 \
+            -O2 \
             -std=c++11 \
             -DWEB_BUILD \
             -D__EMSCRIPTEN__ \
