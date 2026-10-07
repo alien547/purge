@@ -90,7 +90,6 @@ jobs:
             -sALLOW_MEMORY_GROWTH=1 \
             -sASYNCIFY=1 \
             -sASYNCIFY_IMPORTS='["SDL_Delay"]' \
-            -sEVAL_CTORS=1 \
             -sENVIRONMENT=web \
             -sSTACK_SIZE=8MB \
             -sINITIAL_MEMORY=64MB \
