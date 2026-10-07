@@ -1,11 +1,15 @@
 #include <cmath>
 #include <cstring>
-#include <thread>
-#include <future>
 #include <SDL.h>
 #include "Math.h"
 #include "Render.h"
 #include "Blur.h"
+
+#ifndef WEB_BUILD
+#include <thread>
+#include <future>
+#endif
+
 using namespace std;
 
 vector<float> gaussian_kernel(float sigma, int radius){
@@ -66,6 +70,9 @@ void blur_pass(SDL_Surface* surf, const vector<float>& kernel, bool vertical){
     vector<Uint8> output(total_pixels);
     vector<int> int_kernel(kernel.size());
     for(int i=0; i<kernel.size(); ++i)int_kernel[i]=int(kernel[i]*(1<<SCALE_BITS)+0.5f);
+    #ifdef WEB_BUILD
+    blur_pass_rows(surf, int_kernel, vertical, 0, h, output);
+    #else
     unsigned int num_threads=min(thread::hardware_concurrency(), 8u);
     if(num_threads==0)num_threads=2;
     if(w*h<20000||num_threads<2){
@@ -80,6 +87,7 @@ void blur_pass(SDL_Surface* surf, const vector<float>& kernel, bool vertical){
         }
         for(auto& f : futures)f.wait();
     }
+    #endif
     memcpy(surf->pixels, output.data(), total_pixels);
 }
 

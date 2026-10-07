@@ -19,7 +19,7 @@ void GameState::init_menu(){
     TreeNode* _0=menu.add_child(menu.root.get(), "开始游戏");
     menu.TN_node["开始游戏"]=_0;
     menu.TN_node["开始游戏_单机模式"]=menu.add_child(_0, "单机模式");
-    #ifdef SERVER_BUILD
+    #ifndef WEB_BUILD
     menu.TN_node["开始游戏_联机模式"]=menu.add_child(_0, "联机模式");
     menu.TN_node["开始游戏_聊天大厅"]=menu.add_child(_0, "聊天大厅");
 
@@ -46,7 +46,7 @@ void GameState::init_menu(){
     menu.TN_node["设置_成就"]=menu.add_child(_2, "成就");
     menu.TN_node["设置_帮助"]=menu.add_child(_2, "帮助");
     menu.TN_node["设置_关于"]=menu.add_child(_2, "关于");
-    #ifdef SERVER_BUILD
+    #ifndef WEB_BUILD
     menu.TN_node["设置_文件"]=menu.add_child(_2, "文件");
     menu.TN_node["设置_前往官网"]=menu.add_child(_2, "前往官网");
     #endif
