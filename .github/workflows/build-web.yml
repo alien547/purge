@@ -98,11 +98,12 @@ jobs:
             -sSDL2_IMAGE_FORMATS='["png","jpg"]' \
             -sALLOW_MEMORY_GROWTH=1 \
             -sASYNCIFY=1 \
+            -sASYNCIFY_ADVISE=1 \
             -sSTACK_SIZE=8MB \
             -sINITIAL_MEMORY=64MB \
             -sMAXIMUM_MEMORY=512MB \
             -sFORCE_FILESYSTEM=1 \
-            -O1 \
+            -O0 \
             -std=c++11 \
             -DWEB_BUILD \
             -D__EMSCRIPTEN__ \

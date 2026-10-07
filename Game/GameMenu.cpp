@@ -444,11 +444,7 @@ QQ群：)"+QQ_ID+R"(
         draw_image("developer_name", 20, 80);
         draw_text(10, 150, "请输入你的游戏昵称：");
         SDL_RenderPresent(renderer);
-        #ifdef WEB_BUILD
-        user_name=read_input(170, 150, MAX_HUMAN_NAME_SIZE-1, "匿名", nullptr, true);
-        #else
         user_name=read_input(170, 150, MAX_HUMAN_NAME_SIZE-1, "匿名");
-        #endif
         start_human.name=user_name;
         beep(SOUND_OK);
         create_background_texture(top_color, bottom_color, background_horizon);
