@@ -24,7 +24,7 @@ jobs:
       - name: Download lz4 source
         run: |
           mkdir -p libs/lz4/lib libs/lz4/include
-          curl -L https://raw.githubusercontent.com/lz4/lz4/dev/lib/lz4.c -o libs/lz4/lib/lz4.c
+          curl -L https://raw.githubusercontent.com/lz4/lz4/dev/lib/lz4.c -o libs/lz4/lib/lz4.cpp
           curl -L https://raw.githubusercontent.com/lz4/lz4/dev/lib/lz4.h -o libs/lz4/include/lz4.h
           ls -la libs/lz4/lib/ libs/lz4/include/
 
@@ -57,7 +57,7 @@ jobs:
             ../common/Tool/Audio.cpp \
             ../common/Tool/Blur.cpp \
             ../common/Tool/Menu.cpp \
-            ../libs/lz4/lib/lz4.c \
+            ../libs/lz4/lib/lz4.cpp \
             -o purge.html \
             -I../libs/FastNoiseLite \
             -I../libs/nlohmann \
@@ -77,6 +77,7 @@ jobs:
             -sFORCE_FILESYSTEM=1 \
             -O2 \
             -std=c++11 \
+            -Wno-invalid-source-encoding \
             -DWEB_BUILD \
             -D__EMSCRIPTEN__ \
             --preload-file ../assets@/assets \
