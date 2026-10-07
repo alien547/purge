@@ -1,3 +1,26 @@
+name: Build WebAssembly
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Emscripten
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: 3.1.48
+
+      - name: Verify emcc
+        run: emcc --version
+
       - name: Build WebAssembly
         working-directory: ./Game
         run: |
@@ -55,3 +78,14 @@
             --preload-file ../data@/data \
             -sEXPORTED_RUNTIME_METHODS='["ccall","cwrap"]' \
             --shell-file web_shell.html
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: purge-web-build
+          path: |
+            Game/purge.html
+            Game/purge.js
+            Game/purge.wasm
+            Game/purge.data
+          retention-days: 30
