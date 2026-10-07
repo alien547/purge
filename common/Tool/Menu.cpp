@@ -49,7 +49,7 @@ void Menu::choose(){
     };
     auto exit_node=[&]()->bool{
         if(now_node->parent==nullptr){
-            return true;
+            return can_exit;
         }else{
             now_node=now_node->parent;
             pos=path.top();

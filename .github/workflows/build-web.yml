@@ -28,6 +28,20 @@ jobs:
           curl -L https://raw.githubusercontent.com/lz4/lz4/dev/lib/lz4.h -o libs/lz4/include/lz4.h
           ls -la libs/lz4/lib/ libs/lz4/include/
 
+      - name: Convert source files from GBK to UTF-8
+        run: |
+          for dir in Game common; do
+            find "$dir" -type f \( -name "*.cpp" -o -name "*.h" \) | while read f; do
+              if iconv -f GBK -t UTF-8 "$f" > "$f.tmp" 2>/dev/null; then
+                mv "$f.tmp" "$f"
+                echo "converted: $f"
+              else
+                rm -f "$f.tmp"
+                echo "skip (not GBK?): $f"
+              fi
+            done
+          done
+
       - name: Build WebAssembly
         working-directory: ./Game
         run: |
@@ -78,7 +92,6 @@ jobs:
             -sFORCE_FILESYSTEM=1 \
             -O2 \
             -std=c++11 \
-            -Wno-invalid-source-encoding \
             -DWEB_BUILD \
             -D__EMSCRIPTEN__ \
             --preload-file ../assets@/assets \

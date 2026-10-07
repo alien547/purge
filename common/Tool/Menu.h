@@ -25,6 +25,7 @@ class Menu{
         std::unique_ptr<TreeNode> root;//目录根节点
         std::unordered_map<std::string, TreeNode*> TN_node;
         TreeNode* now_node;
+        bool can_exit=true;
 
         std::function<void()> on_start_page, on_end_page;
 

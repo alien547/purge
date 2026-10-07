@@ -457,6 +457,12 @@ QQÈº£º)"+QQ_ID+R"(
     };
     menu.on_start_page=func1;
     menu.on_end_page=func2;
+
+    #ifdef WEB_BUILD
+    menu.can_exit=false;
+    #else
+    menu.can_exit=true;
+    #endif
 }
 
 void GameState::change_state(bool& state){
