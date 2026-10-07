@@ -1,26 +1,3 @@
-name: Build WebAssembly
-
-on:
-  push:
-    branches: [ "main", "master" ]
-  workflow_dispatch:
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Emscripten
-        uses: mymindstorm/setup-emsdk@v14
-        with:
-          version: 3.1.48
-
-      - name: Verify emcc
-        run: emcc --version
-
       - name: Build WebAssembly
         working-directory: ./Game
         run: |
@@ -60,6 +37,7 @@ jobs:
             -sUSE_SDL_MIXER=2 \
             -sUSE_SDL_TTF=2 \
             -sUSE_SDL_IMAGE=2 \
+            -sUSE_LZ4=1 \
             -sSDL2_IMAGE_FORMATS='["png","jpg"]' \
             -sALLOW_MEMORY_GROWTH=1 \
             -sASYNCIFY=1 \
@@ -69,20 +47,11 @@ jobs:
             -sFORCE_FILESYSTEM=1 \
             -O1 \
             -std=c++11 \
+            -finput-charset=GBK \
+            -fexec-charset=UTF-8 \
             -DWEB_BUILD \
             -D__EMSCRIPTEN__ \
             --preload-file ../assets@/assets \
             --preload-file ../data@/data \
             -sEXPORTED_RUNTIME_METHODS='["ccall","cwrap"]' \
             --shell-file web_shell.html
-
-      - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: purge-web-build
-          path: |
-            Game/purge.html
-            Game/purge.js
-            Game/purge.wasm
-            Game/purge.data
-          retention-days: 30

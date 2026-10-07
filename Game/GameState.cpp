@@ -146,6 +146,7 @@ bool GameState::load_settings(){
                 version_same=false;
             }
         }
+        #ifndef WEB_BUILD
         if(!version_same){
             data.close();
             clear_renderer();
@@ -161,6 +162,7 @@ bool GameState::load_settings(){
             cleanup();
             return false;
         }
+        #endif
         load_value(data, p->max_health, p->total_kills, p->experience, p->money, p->upgrade_health, p->weapon_type,
         world.day, world.hour, world.minute, world.rain_time, sound_on, max_fps,
         top_color.r, top_color.b, top_color.g, top_color.a, bottom_color.r, bottom_color.b, bottom_color.g, bottom_color.a);

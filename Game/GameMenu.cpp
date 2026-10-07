@@ -48,8 +48,8 @@ void GameState::init_menu(){
     menu.TN_node["设置_关于"]=menu.add_child(_2, "关于");
     #ifdef SERVER_BUILD
     menu.TN_node["设置_文件"]=menu.add_child(_2, "文件");
-    #endif
     menu.TN_node["设置_前往官网"]=menu.add_child(_2, "前往官网");
+    #endif
 
     menu.now_node=menu.root.get();
 
@@ -430,12 +430,12 @@ QQ群：)"+QQ_ID+R"(
             SDL_Delay(LONG_TIME);
         }
     };
-    #endif
     menu.TN_node["设置_前往官网"]->on_enter=[this](){
         draw_text(5, 20, "正在前往...");
         SDL_RenderPresent(renderer);
         open_url(WEBSITE+GAME_LINK);
     };
+    #endif
 
     auto func1=[&](){
         draw_text(5, 0, R"(欢迎来到 )"+GAME_NAME+R"(！游戏愉快！
