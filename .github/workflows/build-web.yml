@@ -36,6 +36,7 @@ jobs:
             GameState.cpp \
             GameRenderer.cpp \
             GameMenu.cpp \
+            GameNetwork.cpp \
             ../common/Human.cpp \
             ../common/ParticleSystem.cpp \
             ../common/Settings.cpp \

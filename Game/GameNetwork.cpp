@@ -1,13 +1,17 @@
 #include <mutex>
-#include <thread>
-#include <enet/enet.h>
 #include "Settings.h"
 #include "GameState.h"
 #include "Tool/Font.h"
-#include "Tool/Http.h"
 #include "Tool/Render.h"
 #include "Tool/Serialize.h"
 #include "Tool/Utils.h"
+
+#ifndef WEB_BUILD
+#include <thread>
+#include <enet/enet.h>
+#include "Tool/Http.h"
+#endif
+
 using namespace std;
 using namespace Settings;
 
