@@ -28,7 +28,8 @@ queue<int> free_channels;
 mutex audio_mutex;
 bool sound_on=true;
 string sfx_path, music_path;
-string pending_music;
+string current_music, pending_music;
+bool music_fading_out=false;
 
 void init_audio(const string& sfx_path_, const string& music_path_){
     sfx_path=sfx_path_;
@@ -116,13 +117,15 @@ void do_play_music(const string& name){
     }
     Mix_HaltMusic();
     Mix_PlayMusic(music, -1);
-    Mix_VolumeMusic(64);
+    Mix_VolumeMusic(128);
 }
 
 void play_music(const string& name){
     if(!sound_on)return;
-    pending_music=name;
+    if(current_music==name&&!music_fading_out)return;
     if(Mix_PlayingMusic()){
+        pending_music=name;
+        music_fading_out=true;
         Mix_FadeOutMusic(500);
     }else{
         do_play_music(name);

@@ -24,6 +24,24 @@ uint8_t World::ir_of_zombie(const Zombie& z){
     return z.dead?IR_DEAD_ZOMBIE:IR_ZOMBIE;
 }
 
+uint8_t World::blend_ir(uint8_t entity_ir, float x, float y){
+    int cx=lround(x), cy=lround(y);
+    float sum=0, wsum=0;
+    for(int dy=-1; dy<=1; ++dy){
+        for(int dx=-1; dx<=1; ++dx){
+            int nx=cx+dx, ny=cy+dy;
+            if(nx<0||nx>=width||ny<0||ny>=height)continue;
+            float u=nx-x, v=ny-y;
+            float w=1.0f/Math::clamp(u*u+v*v, 0.7f, 2.5f);
+            sum+=ir_of_cell(get_cell(nx, ny))*w;
+            wsum+=w;
+        }
+    }
+    if(wsum==0)return entity_ir;
+    float terrain=sum/wsum;
+    return uint8_t(entity_ir*0.15f+terrain*0.85f);
+}
+
 pair<char, SDL_Color> World::get_zombie_appearance(Zombie& z){
     char a;
     SDL_Color color;
@@ -52,9 +70,11 @@ void World::draw_map(int start_x, int end_x, int start_y, int end_y, float view_
             HUMAN_SEE_LEN*human_view_scale, p->direction.first, p->direction.second, HUMAN_SEE_ANGLE*human_view_scale, vis))return;
         }
         if(p&&p->night_vision){
-            float illum=0.4f+env_light_intensity*0.6f;
-            float brightness=0.15f+powf(Math::clamp(ir/255.0f*illum, 0.0f, 1.0f), 0.4f)*0.85f;
-            color={Uint8(brightness*255*0.28f), Uint8(brightness*255), Uint8(brightness*255*0.32f), 255};
+            uint8_t final_ir=blend_ir(ir, x, y);
+            float x=Math::clamp(final_ir/255.0f, 0.0f, 1.0f);
+            float y=1.0f/(1.0f+expf(-8.0f*(x-0.3f)));
+            y=0.05f+y*0.95f;
+            color={Uint8(y*255*0.28f), Uint8(y*255*1.00f), Uint8(y*255*0.32f), 255};
         }else{
             array<int16_t, 3> light=global_light?array<int16_t, 3>{255, 255, 255}:get_light_color(x, y);
             if(light[0]==0&&light[1]==0&&light[2]==0)return;
@@ -88,25 +108,9 @@ void World::draw_map(int start_x, int end_x, int start_y, int end_y, float view_
                     color={60, 160, 60, 255};
                 }
             }
-            if(a=='.'){
-                int hcount=0;
-                if(p){
-                    float u=x-p->physics_params.x, v=y-p->physics_params.y;
-                    float dist_sq=u*u+v*v;
-                    hcount=max(int((36-dist_sq)*0.08f), 0);
-                }
-                color.a=Uint8(Math::clamp(128/(hcount*0.5f+1), 0.0f, 255.0f));
-                const float step=1.0f/(hcount*2+1);
-                for(int j=-hcount; j<=hcount; ++j){
-                    for(int i=-hcount; i<=hcount; ++i){
-                        draw_entity(x+i*step, y+j*step, a, color, ir_of_cell(now_cell));
-                    }
-                }
-            }else{
-                draw_entity(x, y, a, color, ir_of_cell(now_cell));
-            }
+            draw_entity(x, y, a, color, ir_of_cell(now_cell));
             if(rain_time>0&&!random(0, 12-(rain_heavy?4:0))){
-                draw_entity(x, y, '\\', {50, 60, 255, Uint8(180+random(0, 3)*24)}, IR_RAIN);
+                draw_entity(x+randomf(-0.15f, 0.15f), y+randomf(-0.15f, 0.15f), '\\', {50, 60, 255, Uint8(180+random(0, 3)*24)}, IR_RAIN);
             }
         }
     }
@@ -256,8 +260,12 @@ int World::play_sfx_at(const string& name, float x, float y, float base_vol, flo
     return channel;
 }
 
-void World::play_music_at(const string& name){
-    play_music(name);
+void World::play_music_at(const string& name, bool enabled){
+    if(enabled){
+        play_music(name);
+    }else{
+        stop_music();
+    }
 }
 
 void World::update_audio_distances(float listener_x, float listener_y){

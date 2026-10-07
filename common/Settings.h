@@ -61,23 +61,24 @@ namespace Settings{
     LONG_TIME  = 1200;
 
     constexpr uint8_t
-    IR_WATER       = 20,
-    IR_WALL        = 90,
-    IR_DEAD_ZOMBIE = 60,
-    IR_BLOOD       = 80,
-    IR_SUPPLY      = 180,
-    IR_HUMAN       = 200,
-    IR_EXIT        = 220,
-    IR_GRASS_DRY   = 200,
-    IR_GRASS       = 220,
-    IR_GRASS_DEEP  = 230,
-    IR_RAIN        = 25,
-    IR_ZOMBIE      = 210,
-    IR_BULLET      = 240;
+    //近红外反射率
+    IR_WATER       = 8,
+    IR_WALL        = 75,
+    IR_DEAD_ZOMBIE = 90,
+    IR_BLOOD       = 60,
+    IR_SUPPLY      = 120,
+    IR_HUMAN       = 155,
+    IR_EXIT        = 165,
+    IR_GRASS_DRY   = 105,
+    IR_GRASS       = 140,
+    IR_GRASS_DEEP  = 165,
+    IR_RAIN        = 15,
+    IR_ZOMBIE      = 170,
+    IR_BULLET      = 80;
 
     constexpr short
     VERSION[3]     = {1, 1, 2},
-    LAST_UPDATE[3] = {2026, 10, 6};
+    LAST_UPDATE[3] = {2026, 10, 7};
 
     constexpr float
     //视野

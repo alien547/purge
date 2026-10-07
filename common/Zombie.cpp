@@ -161,6 +161,7 @@ void Zombie::move(World& world){
     if(type==FAST_ZOMBIE||random(0, 2))move_distance(world, next_step.first+offset_x, next_step.second+offset_y);
     physics_params.x=Math::clamp(physics_params.x, 0.0f, float(world.width-1)), physics_params.y=Math::clamp(physics_params.y, 0.0f, float(world.height-1));
     if(target){
+        target->combat_intensity+=0.02f;
         float u=target->physics_params.x-physics_params.x, v=target->physics_params.y-physics_params.y;
         float dist_sq=u*u+v*v;
         if(dist_sq<0.25f&&attack==0){
@@ -207,6 +208,7 @@ bool Zombie::update(World& world){
         for(Human& h : world.humans){
             if(h.id==attacker_damage[max_damage_idx].first){
                 h.experience+=damage*accel;
+                h.combat_intensity+=1.1f;
                 break;
             }
         }

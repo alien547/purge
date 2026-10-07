@@ -1,12 +1,16 @@
 #include <fstream>
 #include <algorithm>
 #include <cmath>
-#include <curl/curl.h>
-#include <enet/enet.h>
 #include "Tool/Tool.h"
 #include "World.h"
 #include "Human.h"
 #include "GameState.h"
+
+#ifndef WEB_BUILD
+#include <curl/curl.h>
+#include <enet/enet.h>
+#endif
+
 using namespace std;
 using namespace chrono;
 using namespace Settings;
@@ -116,6 +120,7 @@ bool GameState::load_settings(){
 
     SDL_ShowWindow(window);
 
+    #ifndef WEB_BUILD
     if(!acquire_single_instance_lock("game")){
         debug("游戏已在运行", DEBUG_ERROR);
         DrawTextOptions opts;
@@ -126,6 +131,7 @@ bool GameState::load_settings(){
         cleanup();
         return false;
     }
+    #endif
 
     draw_text(5, 5, "加载存档...");
     SDL_RenderPresent(renderer);
@@ -210,11 +216,13 @@ void GameState::close_inventory(){
     inv_swap_target=-1;
     if(inv_supply){
         if(is_multiplayer){
+            #ifndef WEB_BUILD
             CloseSupply close_supply;
             close_supply.id=inv_supply->id;
             ENetPacket* packet=enet_packet_create(&close_supply, sizeof(close_supply), ENET_PACKET_FLAG_RELIABLE);
             enet_peer_send(server_peer, 1, packet);
             delete inv_supply;
+            #endif
         }else{
             inv_supply->is_opening=false;
         }
@@ -234,8 +242,10 @@ void GameState::handle_inventory_input(){
         act.dst_slot=inv_swap_target;
         act.supply_id=inv_supply?inv_supply->id:0;
         if(is_connected){
+            #ifndef WEB_BUILD
             ENetPacket* packet=enet_packet_create(&act, sizeof(act), ENET_PACKET_FLAG_RELIABLE);
             enet_peer_send(server_peer, 1, packet);
+            #endif
         }else{
             world.execute_inventory_action(p->id, act);
         }
@@ -342,6 +352,7 @@ void GameState::game_update(){
         world.trigger_slowmo(0.2f, 0.1f);
     }
     if(is_multiplayer){
+        #ifndef WEB_BUILD
         while(d_now_time(all_time.last_network_update, 0.03)){
             if(is_connected&&is_foreground){
                 send_input(get_input());
@@ -361,6 +372,7 @@ void GameState::game_update(){
             check_achievements();
             world.particle_system.update(world.width, world.height);
         }
+        #endif
     }else{
         if(duration<double>(steady_clock::now()-all_time.last_auto_save).count()>=120){
             all_time.last_auto_save=steady_clock::now();
@@ -398,13 +410,15 @@ void GameState::game_update(){
 
 void GameState::cleanup(){
     flush_log_to_file();
+    #ifndef WEB_BUILD
     disconnect_from_server();
+    curl_global_cleanup();
+    enet_deinitialize();
+    #endif
     cleanup_font();
     cleanup_image();
     cleanup_audio();
     cleanup_cursor();
     cleanup_render();
-    curl_global_cleanup();
-    enet_deinitialize();
 }
 

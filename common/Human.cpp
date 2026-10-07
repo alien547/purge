@@ -43,7 +43,7 @@ void Human::move(World& world){
         return;
     }else if(--footstep_time<=0){
         footstep_time=12;
-        world.add_sfx("footsteps", physics_params.x, physics_params.y, run?60:45, run?10:6);
+        world.add_sfx("footsteps", physics_params.x, physics_params.y, run?60:40, run?10:6);
     }
     run=(get_key(*k_s, SDL_SCANCODE_LSHIFT)||get_key(*k_s, SDL_SCANCODE_RSHIFT))&&!get_key(*k_s, KEY_MOUSE_LEFT)&&rest==0;
     float k=HUMAN_ACCEL/dist*world.get_vel_scale(lround(physics_params.x), lround(physics_params.y));
@@ -67,6 +67,7 @@ void Human::operate(World& world){//玩家操作
             attacke=10;
         }else{
             attacke=w->attacke;
+            combat_intensity+=0.05f;
             if(w->type.second==MELEE){//近战
                 auto func=[&](Zombie* z)->bool{
                     float u=z->physics_params.x-physics_params.x, v=z->physics_params.y-physics_params.y;
@@ -83,6 +84,7 @@ void Human::operate(World& world){//玩家操作
                             world.emit_blood(z->physics_params.x, z->physics_params.y, direction.first, direction.second, damage/3);
                             world.shake_intensity+=0.06f;
                             world.trigger_slowmo(0.25f, 0.2f);
+                            combat_intensity+=0.4f;
                         }
                         return false;
                     }
@@ -244,6 +246,17 @@ void Human::update(World& world){
         physics_params.x=world.last_spawn_x;
         physics_params.y=world.last_spawn_y;
         world.add_sfx("human_scream", physics_params.x, physics_params.y, 90, 15);
+    }
+    combat_intensity=max(combat_intensity-0.02f, 0.0f);
+    bool should_combat_music_on;
+    if(combat_intensity>3.0f){
+        should_combat_music_on=true;
+    }else if(combat_intensity<2.0f){
+        should_combat_music_on=false;
+    }
+    if(should_combat_music_on!=combat_music_on){
+        combat_music_on=should_combat_music_on;
+        world.add_music("battle", id, combat_music_on);
     }
 }
 

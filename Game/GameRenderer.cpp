@@ -1,5 +1,4 @@
 #include <cmath>
-#include <enet/enet.h>
 #include "Settings.h"
 #include "GameState.h"
 #include "Tool/Render.h"
@@ -8,6 +7,11 @@
 #include "Tool/Random.h"
 #include "Tool/Math.h"
 #include "Tool/Utils.h"
+
+#ifndef WEB_BUILD
+#include <enet/enet.h>
+#endif
+
 using namespace std;
 using namespace Settings;
 
@@ -53,6 +57,7 @@ void GameState::draw_crosshair(Human* p){
 }
 
 void GameState::draw_scoreboard(){
+    #ifndef WEB_BUILD
     int start_x=SCREEN_WIDTH/5, start_y=60, end_x=SCREEN_WIDTH*4/5, end_y=SCREEN_HEIGHT-90;
     draw_rounded_rect_texture(start_x, start_y, end_x-start_x, end_y-start_y, 80);
     for(int i=0; i<world.humans.size(); ++i){
@@ -67,6 +72,7 @@ void GameState::draw_scoreboard(){
     opts.center=true;
     opts.small=true;
     draw_text(SCREEN_WIDTH/2, end_y-10, "IP 地理位置数据由 IPinfo 提供 (ipinfo.io)", opts);
+    #endif
 }
 
 void GameState::draw_screen(){//绘制屏幕
@@ -113,7 +119,9 @@ void GameState::draw_screen(){//绘制屏幕
     }
     //游戏信息
     draw_text(SCREEN_WIDTH*3/6+100, 20, to_string(smooth_fps)+"帧");
+    #ifndef WEB_BUILD
     if(is_connected&&server_peer)draw_text(SCREEN_WIDTH*4/6+100, 20, "ping "+to_string(server_peer->roundTripTime));
+    #endif
     //地图信息
     world.draw_map(start_x, end_x, start_y, end_y, view_start_x, view_start_y, false, p, self);
     //玩家信息

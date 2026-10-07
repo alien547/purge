@@ -35,11 +35,6 @@ struct InventoryResult{
 
 class GameState;
 
-struct _ENetHost;
-struct _ENetPeer;
-typedef struct _ENetHost ENetHost;
-typedef struct _ENetPeer ENetPeer;
-
 //类似 敌人、物品、子弹等 “客观存在”的 数据及逻辑  
 class World{
     public:
@@ -130,7 +125,7 @@ class World{
         void add_bullet(float x, float y, float vel_x, float vel_y, int damage, int health, int id, bool can_explo);
         void add_zombie();
         void add_sfx(const std::string& name, float x, float y, float base_vol, float max_dist);
-        void add_music(const std::string& name, ENetPeer* peer);
+        void add_music(const std::string& name, uint64_t id, bool enabled);
         void emit_particle(float x, float y, std::pair<int, int> speed_clamp, std::pair<int, int> max_life_clamp, std::pair<int, int> size_clamp, int count, ColorRGB color);
         void emit_blood(float x, float y, float dir_x, float dir_y, int count);
         void env_update();
@@ -141,12 +136,13 @@ class World{
         #ifndef SERVER_BUILD
         uint8_t ir_of_cell(const Cell& c);
         uint8_t ir_of_zombie(const Zombie& z);
+        uint8_t blend_ir(uint8_t entity_ir, float x, float y);
         std::pair<char, SDL_Color> get_zombie_appearance(Zombie& z);
         void draw_map(int start_x, int end_x, int start_y, int end_y, float view_start_x, float view_start_y, bool global_light=false, Human* p=nullptr, int self=-1);
         void draw_shadows(float view_start_x, float view_start_y, Human* p, int self);
         void update_persistent_sounds();
         int play_sfx_at(const std::string& name, float x, float y, float base_vol, float max_dist);
-        void play_music_at(const std::string& name);
+        void play_music_at(const std::string& name, bool enabled);
         void update_audio_distances(float listener_x, float listener_y);
         void stop_all_sfx();
         std::array<int16_t, 3> get_light_color(float x, float y);

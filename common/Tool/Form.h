@@ -1,6 +1,10 @@
 #ifndef FORM_H
 #define FORM_H
 
+#include <functional>
+#include <vector>
+#include <string>
+
 constexpr short
 FORM_TEXT   = 0,
 FORM_NUM    = 1,

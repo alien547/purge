@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>清除感染者（Purge）</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            color: #eee;
+            height: 100%;
+            overflow: hidden;
+            font-family: -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+        }
+        #canvas-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100vw;
+            height: 100vh;
+        }
+        canvas {
+            outline: none;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            max-width: 100%;
+            max-height: 100%;
+        }
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 18px;
+            color: #888;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        #error {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #f55;
+            font-size: 16px;
+            text-align: center;
+            display: none;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container"></div>
+    <div id="loading">加载中...</div>
+    <div id="error"></div>
+
+    <script>
+        var Module = {
+            canvas: (function() {
+                var canvas = document.createElement('canvas');
+                canvas.id = 'canvas';
+                canvas.tabIndex = -1;
+                document.getElementById('canvas-container').appendChild(canvas);
+                return canvas;
+            })(),
+
+            onRuntimeInitialized: function() {
+                var loading = document.getElementById('loading');
+                if (loading) loading.style.opacity = '0';
+                setTimeout(function() {
+                    if (loading) loading.style.display = 'none';
+                }, 300);
+                // 让画布获得焦点，接收键盘事件
+                try {
+                    Module.canvas.focus();
+                } catch (e) {}
+            },
+
+            onAbort: function(reason) {
+                var err = document.getElementById('error');
+                err.textContent = '运行失败：' + reason;
+                err.style.display = 'block';
+                document.getElementById('loading').style.display = 'none';
+            },
+
+            print: function(text) {
+                console.log(text);
+            },
+            printErr: function(text) {
+                console.warn(text);
+            }
+        };
+
+        // 点击画布时聚焦，确保键盘事件被捕获
+        window.addEventListener('load', function() {
+            var canvas = document.getElementById('canvas');
+            if (canvas) {
+                canvas.addEventListener('click', function() {
+                    canvas.focus();
+                });
+            }
+            // 阻止右键菜单（游戏内右键可能有用）
+            document.addEventListener('contextmenu', function(e) {
+                if (e.target.id === 'canvas') e.preventDefault();
+            });
+        });
+    </script>
+    {{{ SCRIPT }}}
+</body>
+</html>

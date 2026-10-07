@@ -1,14 +1,17 @@
 #include <sstream>
 #include <fstream>
-#include <future>
-#include <json.hpp>
 #include "Tool/Tool.h"
 #include "Settings.h"
 #include "GameState.h"
 using namespace std;
 using namespace chrono;
 using namespace Settings;
+
+#ifndef WEB_BUILD
+#include <future>
+#include <json.hpp>
 using json=nlohmann::json;
+#endif
 
 void GameState::init_menu(){
     menu.root=unique_ptr<TreeNode>(new TreeNode("主菜单"));//初始化结构
@@ -16,11 +19,13 @@ void GameState::init_menu(){
     TreeNode* _0=menu.add_child(menu.root.get(), "开始游戏");
     menu.TN_node["开始游戏"]=_0;
     menu.TN_node["开始游戏_单机模式"]=menu.add_child(_0, "单机模式");
+    #ifdef SERVER_BUILD
     menu.TN_node["开始游戏_联机模式"]=menu.add_child(_0, "联机模式");
     menu.TN_node["开始游戏_聊天大厅"]=menu.add_child(_0, "聊天大厅");
 
     TreeNode* _1=menu.add_child(menu.root.get(), "创意工坊");
     menu.TN_node["创意工坊"]=_1;
+    #endif
 
     TreeNode* _2=menu.add_child(menu.root.get(), "设置");
     menu.TN_node["设置"]=_2;
@@ -41,7 +46,9 @@ void GameState::init_menu(){
     menu.TN_node["设置_成就"]=menu.add_child(_2, "成就");
     menu.TN_node["设置_帮助"]=menu.add_child(_2, "帮助");
     menu.TN_node["设置_关于"]=menu.add_child(_2, "关于");
+    #ifdef SERVER_BUILD
     menu.TN_node["设置_文件"]=menu.add_child(_2, "文件");
+    #endif
     menu.TN_node["设置_前往官网"]=menu.add_child(_2, "前往官网");
 
     menu.now_node=menu.root.get();
@@ -67,6 +74,7 @@ void GameState::init_menu(){
         save_data(&start_human);
         debug("退出游戏", DEBUG_INFO);
     };
+    #ifndef WEB_BUILD
     menu.TN_node["开始游戏_联机模式"]->on_enter=[this](){
         draw_text(5, 20, "1.创建房间 2.加入房间");
         int choice=prompt_choice(2);
@@ -310,6 +318,7 @@ void GameState::init_menu(){
         #endif
         start_server_process(server_bin, "");
     };
+    #endif
     menu.TN_node["设置_音效_修改状态"]->on_enter=[this](){
         change_state(sound_on);
     };
@@ -374,6 +383,7 @@ QQ群：)"+QQ_ID+R"(
         SDL_RenderPresent(renderer);
         menu.wait_key_press();
     };
+    #ifndef WEB_BUILD
     menu.TN_node["设置_文件"]->on_enter=[this](){
         draw_text(5, 20, "1.上传地图 2.下载地图");
         int choice=prompt_choice(2);
@@ -420,6 +430,7 @@ QQ群：)"+QQ_ID+R"(
             SDL_Delay(LONG_TIME);
         }
     };
+    #endif
     menu.TN_node["设置_前往官网"]->on_enter=[this](){
         draw_text(5, 20, "正在前往...");
         SDL_RenderPresent(renderer);

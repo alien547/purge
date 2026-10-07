@@ -115,7 +115,9 @@ struct SfxEvent{
 
 struct MusicEvent{
     uint8_t tag=PKT_MUSIC_EVENT;
+    uint64_t id;
     char name[MAX_MUSIC_NAME_SIZE];
+    bool enabled;
 };
 
 struct ParticleEvent{

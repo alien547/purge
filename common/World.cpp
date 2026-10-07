@@ -555,7 +555,7 @@ void World::add_sfx(const string& name, float x, float y, float base_vol, float 
     #ifdef SERVER_BUILD
     SfxEvent ev;
     strncpy(ev.name, name.c_str(), MAX_SFX_NAME_SIZE-1);
-    ev.name[MAX_SOUND_NAME_SIZE-1]='\0';
+    ev.name[MAX_SFX_NAME_SIZE-1]='\0';
     ev.x=x;
     ev.y=y;
     ev.base_vol=base_vol;
@@ -567,19 +567,17 @@ void World::add_sfx(const string& name, float x, float y, float base_vol, float 
     #endif
 }
 
-void World::add_music(const string& name, ENetPeer* peer){
+void World::add_music(const string& name, uint64_t id, bool enabled){
     #ifdef SERVER_BUILD
     MusicEvent ev;
+    ev.id=id;
     strncpy(ev.name, name.c_str(), MAX_MUSIC_NAME_SIZE-1);
-    ev.name[MAX_SOUND_NAME_SIZE-1]='\0';
+    ev.name[MAX_MUSIC_NAME_SIZE-1]='\0';
+    ev.enabled=enabled;
     ENetPacket* packet=enet_packet_create(&ev, sizeof(ev), ENET_PACKET_FLAG_RELIABLE);
-    if(peer==nullptr){
-        enet_host_broadcast(server_host, 1, packet);
-    }else{
-        enet_peer_send(peer, 1, packet);
-    }
+    enet_host_broadcast(server_host, 1, packet);
     #else
-    play_music_at(name);
+    play_music_at(name, enabled);
     #endif
 }
 

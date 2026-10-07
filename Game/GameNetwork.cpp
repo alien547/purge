@@ -11,6 +11,41 @@
 using namespace std;
 using namespace Settings;
 
+void GameState::send_chat(string chat_message){
+    if(!is_multiplayer){//ÃüÁî
+        if(chat_message[0]=='/'){
+            chat_message.erase(0, 1);
+            int space=chat_message.find(' ');
+            string cmd_name=chat_message.substr(0, space);
+            string args=(space!=string::npos)?chat_message.substr(space+1):"";
+
+            auto handler=safe_map_find(cmd_handlers, cmd_name);
+            if(handler){
+                handler(args);
+            }else{
+                add_info("Î´ÖªÃüÁî", INFO_SYSTEM, 30);
+            }
+            return;
+        }else{
+            add_info(chat_message, INFO_CHAT, 30, user_name+"£º");
+        }
+        return;
+    }
+    #ifndef WEB_BUILD
+    if(!server_peer)return;
+    Human* p=get_now_player();
+    if(!p)return;
+    ChatMessage chat;
+    strncpy(chat.sender_name, p->name.c_str(), MAX_HUMAN_NAME_SIZE-1);
+    chat.sender_name[MAX_HUMAN_NAME_SIZE-1]='\0';
+    strncpy(chat.content, chat_message.c_str(), MAX_CHAT_MESSAGE_SIZE-1);
+    chat.content[MAX_CHAT_MESSAGE_SIZE-1]='\0';
+    ENetPacket* packet=enet_packet_create(&chat, sizeof(chat), ENET_PACKET_FLAG_RELIABLE);
+    enet_peer_send(server_peer, 1, packet);
+    #endif
+}
+
+#ifndef WEB_BUILD
 void GameState::flush_net_tasks(){
     lock_guard<mutex> lock(net_tasks_mutex);
     while(!net_tasks.empty()){
@@ -71,38 +106,6 @@ void GameState::disconnect_from_server(){
 void GameState::send_input(const KeyState& input){
     if(!server_peer||!is_connected)return;
     ENetPacket* packet=enet_packet_create(&input, sizeof(input), ENET_PACKET_FLAG_RELIABLE);
-    enet_peer_send(server_peer, 1, packet);
-}
-
-void GameState::send_chat(string chat_message){
-    if(!is_multiplayer){//ÃüÁî
-        if(chat_message[0]=='/'){
-            chat_message.erase(0, 1);
-            int space=chat_message.find(' ');
-            string cmd_name=chat_message.substr(0, space);
-            string args=(space!=string::npos)?chat_message.substr(space+1):"";
-
-            auto handler=safe_map_find(cmd_handlers, cmd_name);
-            if(handler){
-                handler(args);
-            }else{
-                add_info("Î´ÖªÃüÁî", INFO_SYSTEM, 30);
-            }
-            return;
-        }else{
-            add_info(chat_message, INFO_CHAT, 30, user_name+"£º");
-        }
-        return;
-    }
-    if(!server_peer)return;
-    Human* p=get_now_player();
-    if(!p)return;
-    ChatMessage chat;
-    strncpy(chat.sender_name, p->name.c_str(), MAX_HUMAN_NAME_SIZE-1);
-    chat.sender_name[MAX_HUMAN_NAME_SIZE-1]='\0';
-    strncpy(chat.content, chat_message.c_str(), MAX_CHAT_MESSAGE_SIZE-1);
-    chat.content[MAX_CHAT_MESSAGE_SIZE-1]='\0';
-    ENetPacket* packet=enet_packet_create(&chat, sizeof(chat), ENET_PACKET_FLAG_RELIABLE);
     enet_peer_send(server_peer, 1, packet);
 }
 
@@ -186,7 +189,8 @@ void GameState::process_network_events(){
                     case PKT_MUSIC_EVENT:{
                         MusicEvent ev;
                         memcpy(&ev, event.packet->data, sizeof(ev));
-                        world.play_music_at(ev.name);
+                        if(ev.id!=id)break;
+                        world.play_music_at(ev.name, ev.enabled);
                         break;
                     }
                     case PKT_PARTICLE_EVENT:{
@@ -352,4 +356,5 @@ void GameState::apply_snapshot(const WorldSnapshot& snap){
 
     world.update_persistent_sounds();
 }
+#endif
 
