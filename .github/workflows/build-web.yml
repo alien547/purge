@@ -60,7 +60,7 @@ jobs:
             -sUSE_SDL_MIXER=2 \
             -sUSE_SDL_TTF=2 \
             -sUSE_SDL_IMAGE=2 \
-            -sUSE_LZ4=1 \
+            --use-port=lz4 \
             -sSDL2_IMAGE_FORMATS='["png","jpg"]' \
             -sALLOW_MEMORY_GROWTH=1 \
             -sASYNCIFY=1 \
