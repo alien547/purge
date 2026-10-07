@@ -59,12 +59,20 @@
     <script>
         var Module = {
             canvas: (function() {
-                var canvas = document.createElement('canvas');
-                canvas.id = 'canvas';
-                canvas.tabIndex = -1;
-                document.getElementById('canvas-container').appendChild(canvas);
-                return canvas;
-            })(),
+            var canvas = document.createElement('canvas');
+            canvas.id = 'canvas';
+            canvas.tabIndex = -1;
+            // ★ 预先创建 WebGL context，指定 preserveDrawingBuffer
+            canvas.getContext('webgl', {
+                preserveDrawingBuffer: true,
+                alpha: false,
+                antialias: true,
+                depth: false,
+                stencil: false
+            });
+            document.getElementById('canvas-container').appendChild(canvas);
+            return canvas;
+        })(),
 
             onRuntimeInitialized: function() {
                 var loading = document.getElementById('loading');
