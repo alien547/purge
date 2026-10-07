@@ -197,7 +197,7 @@ void send_snapshot_to_peer(ENetPeer* peer){
     snap.minute=world.minute;
     snap.rain_time=world.rain_time;
     snap.sky_flash=world.sky_flash;
-    snap.env_play_sound_info=world.play_sound_info;
+    snap.env_play_sfx_info=world.play_sfx_info;
     snap.rain_heavy=world.rain_heavy;
     snap.env_light_intensity=world.env_light_intensity;
     snap.env_light_color_r=world.env_light_color.r;

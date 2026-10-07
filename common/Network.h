@@ -158,7 +158,7 @@ struct WorldSnapshot{
     int16_t day, hour, rain_time;
     int8_t search_item, go_exit, hurt, weapon_switch_time, stun_time, nv_boot_time;
     int8_t humans_size, zombies_size, bullets_size, supplies_size, lights_size;
-    int8_t sky_flash, env_play_sound_info;
+    int8_t sky_flash, env_play_sfx_info;
     uint8_t env_light_color_r, env_light_color_g, env_light_color_b;
     bool flash, night_vision;
     bool rain_heavy;

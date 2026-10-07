@@ -401,7 +401,7 @@ void init(){
     //SDL
     init_render("Editor");
     //SDL_mixer
-    init_audio("../assets/sounds/");
+    init_audio("../assets/sfx/", "../assets/music/");
     //SDL_ttf
     init_font("../assets/fonts/Font.otf");
     //SDL_image

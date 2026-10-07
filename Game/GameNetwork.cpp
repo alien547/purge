@@ -266,6 +266,7 @@ void GameState::apply_snapshot(const WorldSnapshot& snap){
     world.minute=snap.minute;
     world.rain_time=snap.rain_time;
     world.sky_flash=snap.sky_flash;
+    world.play_sfx_info=snap.env_play_sfx_info;
     world.rain_heavy=snap.rain_heavy;
     world.env_light_intensity=snap.env_light_intensity;
     world.env_light_color={snap.env_light_color_r, snap.env_light_color_g, snap.env_light_color_b};
