@@ -104,6 +104,13 @@ jobs:
             -sEXPORTED_RUNTIME_METHODS='["ccall","cwrap"]' \
             --shell-file web_shell.html
 
+      - name: Brotli compress purge.data
+        run: |
+          sudo apt-get install -y brotli
+          brotli -q 11 Game/purge.data -o Game/purge.data.br
+          ls -lh Game/purge.data Game/purge.data.br
+          mv Game/purge.data.br Game/purge.data
+
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
