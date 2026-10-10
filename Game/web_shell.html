@@ -62,13 +62,13 @@
             var canvas = document.createElement('canvas');
             canvas.id = 'canvas';
             canvas.tabIndex = -1;
-            // ★ 预先创建 WebGL context，指定 preserveDrawingBuffer
-            canvas.getContext('webgl', {
+            canvas.getContext('webgl2', {
                 preserveDrawingBuffer: true,
                 alpha: false,
                 antialias: true,
                 depth: false,
-                stencil: false
+                stencil: false,
+                powerPreference: 'high-performance'
             });
             document.getElementById('canvas-container').appendChild(canvas);
             return canvas;
