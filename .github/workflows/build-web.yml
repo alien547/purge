@@ -82,6 +82,9 @@ jobs:
             -I../libs/lz4/include \
             -I../common \
             -I. \
+            -sFULL_ES3=1 \
+            -sMIN_WEBGL_VERSION=2 \
+            -sMAX_WEBGL_VERSION=2 \
             -sUSE_SDL=2 \
             -sUSE_SDL_MIXER=2 \
             -sUSE_SDL_TTF=2 \
