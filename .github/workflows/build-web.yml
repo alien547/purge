@@ -16,7 +16,7 @@ jobs:
       - name: Setup Emscripten
         uses: mymindstorm/setup-emsdk@v14
         with:
-          version: 3.1.60
+          version: 4.0.13
 
       - name: Verify emcc
         run: emcc --version
@@ -47,8 +47,6 @@ jobs:
 
       - name: Build WebAssembly
         working-directory: ./Game
-        env:
-          EM_EXCLUSIVE_CACHE_ACCESS: 1
         run: |
           emcc \
             main.cpp \
@@ -126,9 +124,5 @@ jobs:
         with:
           name: purge-web-build
           path: |
-            Game/purge.html
-            Game/purge.js
-            Game/purge.wasm
-            Game/purge.data
-            Game/purge.audio.worklet.js
+            Game/*
           retention-days: 30
