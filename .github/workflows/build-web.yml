@@ -92,7 +92,6 @@ jobs:
             -sSDL2_MIXER_FORMATS='["wav"]' \
             -sSDL2_IMAGE_FORMATS='["png"]' \
             -sALLOW_MEMORY_GROWTH=1 \
-            -sAUDIO_WORKLET=1 \
             -sDISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=1 \
             -sASYNCIFY=1 \
             -sASYNCIFY_IMPORTS='["SDL_Delay"]' \
