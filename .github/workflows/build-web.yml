@@ -98,8 +98,7 @@ jobs:
             -sASYNCIFY=1 \
             -sASYNCIFY_IMPORTS='["SDL_Delay"]' \
             -sASYNCIFY_IGNORE_INDIRECT=1 \
-            --closure 1 \
-            -sENVIRONMENT=web \
+            -sENVIRONMENT=web,worker \
             -sSTACK_SIZE=4MB \
             -sINITIAL_MEMORY=64MB \
             -sMAXIMUM_MEMORY=256MB \
