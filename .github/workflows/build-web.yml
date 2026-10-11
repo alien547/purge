@@ -16,7 +16,7 @@ jobs:
       - name: Setup Emscripten
         uses: mymindstorm/setup-emsdk@v14
         with:
-          version: 3.1.48
+          version: 3.1.60
 
       - name: Verify emcc
         run: emcc --version
@@ -85,6 +85,9 @@ jobs:
             -sFULL_ES3=1 \
             -sMIN_WEBGL_VERSION=2 \
             -sMAX_WEBGL_VERSION=2 \
+            -pthread \
+            -sAUDIO_WORKLET=1 \
+            -sWASM_WORKERS=1 \
             -sUSE_SDL=2 \
             -sUSE_SDL_MIXER=2 \
             -sUSE_SDL_TTF=2 \
@@ -96,7 +99,7 @@ jobs:
             -sASYNCIFY=1 \
             -sASYNCIFY_IMPORTS='["SDL_Delay"]' \
             -sASYNCIFY_IGNORE_INDIRECT=1 \
-            -sENVIRONMENT=web \
+            -sENVIRONMENT=web,worker \
             -sSTACK_SIZE=4MB \
             -sINITIAL_MEMORY=64MB \
             -sMAXIMUM_MEMORY=256MB \
