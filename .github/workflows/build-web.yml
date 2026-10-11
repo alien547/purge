@@ -47,6 +47,8 @@ jobs:
 
       - name: Build WebAssembly
         working-directory: ./Game
+        env:
+          EM_EXCLUSIVE_CACHE_ACCESS: 1
         run: |
           emcc \
             main.cpp \
