@@ -15,34 +15,32 @@
             font-family: -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
         }
         #canvas-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100vw;
-            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw; height: 100vh;
+            contain: strict;
+            overflow: hidden;
         }
-        canvas {
+        #canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            contain: strict;
             outline: none;
-            image-rendering: pixelated;
-            image-rendering: crisp-edges;
-            max-width: 100%;
-            max-height: 100%;
+            border: 0;
+        }
+        #loading, #error {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
         }
         #loading {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
             font-size: 18px;
             color: #888;
-            pointer-events: none;
-            transition: opacity 0.3s;
+            transition: opacity .3s;
         }
         #error {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
             color: #f55;
             font-size: 16px;
             text-align: center;
@@ -61,15 +59,6 @@
             canvas: (function() {
             var canvas = document.createElement('canvas');
             canvas.id = 'canvas';
-            canvas.tabIndex = -1;
-            canvas.getContext('webgl2', {
-                preserveDrawingBuffer: true,
-                alpha: false,
-                antialias: true,
-                depth: false,
-                stencil: false,
-                powerPreference: 'high-performance'
-            });
             document.getElementById('canvas-container').appendChild(canvas);
             return canvas;
         })(),
@@ -101,16 +90,9 @@
             }
         };
 
-        // 点击画布时聚焦，确保键盘事件被捕获
-        window.addEventListener('load', function() {
-            var canvas = document.getElementById('canvas');
-            if (canvas) {
-                canvas.addEventListener('click', function() {
-                    canvas.focus();
-                });
-            }
-            // 阻止右键菜单（游戏内右键可能有用）
-            document.addEventListener('contextmenu', function(e) {
+        window.addEventListener('load', function(){
+            // 阻止右键菜单
+            document.addEventListener('contextmenu', function(e){
                 if (e.target.id === 'canvas') e.preventDefault();
             });
         });
