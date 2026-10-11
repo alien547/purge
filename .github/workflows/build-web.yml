@@ -85,7 +85,6 @@ jobs:
             -sFULL_ES3=1 \
             -sMIN_WEBGL_VERSION=2 \
             -sMAX_WEBGL_VERSION=2 \
-            -pthread
             -sUSE_SDL=2 \
             -sUSE_SDL_MIXER=2 \
             -sUSE_SDL_TTF=2 \
@@ -94,12 +93,11 @@ jobs:
             -sSDL2_IMAGE_FORMATS='["png"]' \
             -sALLOW_MEMORY_GROWTH=1 \
             -sAUDIO_WORKLET=1 \
-            -sWASM_WORKERS=1 \
             -sDISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=1 \
             -sASYNCIFY=1 \
             -sASYNCIFY_IMPORTS='["SDL_Delay"]' \
             -sASYNCIFY_IGNORE_INDIRECT=1 \
-            -sENVIRONMENT=web,worker \
+            -sENVIRONMENT=web \
             -sSTACK_SIZE=4MB \
             -sINITIAL_MEMORY=64MB \
             -sMAXIMUM_MEMORY=256MB \
@@ -128,4 +126,5 @@ jobs:
             Game/purge.js
             Game/purge.wasm
             Game/purge.data
+            Game/purge.audio.worklet.js
           retention-days: 30
